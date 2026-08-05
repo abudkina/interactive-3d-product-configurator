@@ -30,12 +30,18 @@ React 19 · TypeScript · Vite · Three.js / React Three Fiber / Drei · Zustand
 
 ## Быстрый старт
 
+Локально (нужен Vite — просто открыть `index.html` нельзя):
+
 ```bash
 npm install
 npm run dev
 ```
 
 Откройте адрес Vite (обычно `http://localhost:5173`).
+
+Онлайн-демо (GitHub Pages):
+
+https://abudkina.github.io/interactive-3d-product-configurator/
 
 ```bash
 npm run build

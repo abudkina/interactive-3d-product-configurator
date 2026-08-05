@@ -5,8 +5,12 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
+const pagesBase = process.env.GITHUB_PAGES === '1'
+  ? '/interactive-3d-product-configurator/'
+  : '/'
 
 export default defineConfig({
+  base: pagesBase,
   plugins: [react()],
   resolve: {
     alias: {
