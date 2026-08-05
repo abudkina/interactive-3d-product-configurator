@@ -57,4 +57,28 @@ test.describe('Конфигуратор 3D', () => {
     await page.getByRole('button', { name: 'Изменить цвет: Подошва' }).click()
     await expect(page.getByRole('option').first()).toContainText('RAL')
   })
+
+  test('открывает галерею пресетов и применяет схему', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Открыть галерею пресетов' }).click()
+    await expect(page.getByRole('heading', { name: 'Галерея пресетов' })).toBeVisible()
+
+    await page.getByRole('button', { name: /Применить пресет/ }).first().click()
+    await expect(page.getByRole('status').filter({ hasText: /Применён пресет/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Сделать скриншот' })).toBeVisible()
+  })
+
+  test('открывает технические характеристики', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Открыть технические характеристики' }).click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Технические характеристики' }),
+    ).toBeVisible()
+    await expect(page.getByText('Демонстрационный кроссовок')).toBeVisible()
+    await expect(page.getByText('LocalStorage')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Закрыть технические характеристики' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  })
 })

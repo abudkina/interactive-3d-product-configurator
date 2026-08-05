@@ -1,0 +1,16 @@
+{
+  "title": "Технические характеристики",
+  "productName": "Демонстрационный кроссовок",
+  "rows": [
+    { "label": "Формат модели", "value": "glTF 2.0 / GLB или процедурная геометрия" },
+    { "label": "Движок сцены", "value": "Three.js · React Three Fiber" },
+    { "label": "Материалы", "value": "MeshStandardMaterial (PBR)" },
+    { "label": "Слоты окраски", "value": "Корпус, подошва, шнурки, акцент, логотип" },
+    { "label": "Палитры", "value": "Pantone и RAL (локальный JSON)" },
+    { "label": "Управление", "value": "OrbitControls: вращение, масштаб, панорама" },
+    { "label": "Скриншот", "value": "1920×1080, OffscreenCanvas + Web Worker" },
+    { "label": "Хранение", "value": "LocalStorage, IndexedDB, URL hash" },
+    { "label": "Макс. размер модели", "value": "50 МБ" },
+    { "label": "Адаптивность", "value": "от 320px (mobile-first)" }
+  ]
+}

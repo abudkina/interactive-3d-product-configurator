@@ -1,0 +1,80 @@
+[
+  {
+    "id": "ocean",
+    "name": "Океанский бриз",
+    "description": "Глубокий синий корпус и бирюзовый акцент.",
+    "paletteSource": "pantone",
+    "colors": {
+      "body": "#0F4C81",
+      "sole": "#F7F7F7",
+      "laces": "#E8E8E8",
+      "accent": "#40E0D0",
+      "logo": "#0A0A0A"
+    }
+  },
+  {
+    "id": "coral",
+    "name": "Живой коралл",
+    "description": "Тёплый коралловый с песочной подошвой.",
+    "paletteSource": "pantone",
+    "colors": {
+      "body": "#FF6F61",
+      "sole": "#C2B280",
+      "laces": "#F7F7F7",
+      "accent": "#383838",
+      "logo": "#0A0A0A"
+    }
+  },
+  {
+    "id": "midnight",
+    "name": "Полуночный графит",
+    "description": "Тёмный индустриальный образ.",
+    "paletteSource": "ral",
+    "colors": {
+      "body": "#383E42",
+      "sole": "#0A0A0A",
+      "laces": "#C5C7C4",
+      "accent": "#E75B12",
+      "logo": "#F7F9EF"
+    }
+  },
+  {
+    "id": "signal",
+    "name": "Сигнальный",
+    "description": "Транспортный жёлтый и красный акцент.",
+    "paletteSource": "ral",
+    "colors": {
+      "body": "#F7B500",
+      "sole": "#F7F9EF",
+      "laces": "#0A0A0A",
+      "accent": "#C1121C",
+      "logo": "#1A237E"
+    }
+  },
+  {
+    "id": "moss",
+    "name": "Лесной мох",
+    "description": "Приглушённый зелёный и медный акцент.",
+    "paletteSource": "ral",
+    "colors": {
+      "body": "#0F4336",
+      "sole": "#89AC76",
+      "laces": "#C5C7C4",
+      "accent": "#8E402A",
+      "logo": "#F7F9EF"
+    }
+  },
+  {
+    "id": "violet",
+    "name": "Ультрафиолет",
+    "description": "Фиолетовый корпус и лимонный акцент.",
+    "paletteSource": "pantone",
+    "colors": {
+      "body": "#5F4B8B",
+      "sole": "#F7F7F7",
+      "laces": "#FFF44F",
+      "accent": "#FC8EAC",
+      "logo": "#0C0C0C"
+    }
+  }
+]

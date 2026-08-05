@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useConfiguratorStore } from '@/store/configuratorStore'
 import { DEFAULT_COLORS, STORAGE_KEYS } from '@/lib/constants'
+import { getPresets } from '@/lib/presets'
+import { normalizeHex } from '@/lib/validation'
 
 describe('configuratorStore', () => {
   beforeEach(() => {
@@ -17,6 +19,9 @@ describe('configuratorStore', () => {
       error: null,
       toast: null,
       panelOpen: true,
+      view: 'configurator',
+      specsOpen: false,
+      activePresetId: null,
     })
   })
 
@@ -50,5 +55,18 @@ describe('configuratorStore', () => {
 
     expect(useConfiguratorStore.getState().colors.laces).toBe('#445566')
     expect(useConfiguratorStore.getState().paletteSource).toBe('ral')
+  })
+
+  it('применяет пресет и переключает вид', () => {
+    const preset = getPresets()[0]!
+    useConfiguratorStore.getState().applyPreset(preset)
+    expect(useConfiguratorStore.getState().colors.body).toBe(
+      normalizeHex(preset.colors.body),
+    )
+    expect(useConfiguratorStore.getState().activePresetId).toBe(preset.id)
+    expect(useConfiguratorStore.getState().toast).toMatch(/Применён пресет/i)
+
+    useConfiguratorStore.getState().setView('gallery')
+    expect(useConfiguratorStore.getState().view).toBe('gallery')
   })
 })

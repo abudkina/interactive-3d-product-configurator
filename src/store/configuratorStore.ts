@@ -15,6 +15,13 @@ import {
 } from '@/lib/hashConfig'
 import { normalizeHex, validateHexColor } from '@/lib/validation'
 import { logger } from '@/lib/logger'
+import {
+  type ColorPreset,
+  normalizePresetColors,
+  validatePreset,
+} from '@/lib/presets'
+
+export type AppView = 'configurator' | 'gallery'
 
 interface ConfiguratorStore {
   colors: MaterialColorMap
@@ -27,6 +34,9 @@ interface ConfiguratorStore {
   error: string | null
   toast: string | null
   panelOpen: boolean
+  view: AppView
+  specsOpen: boolean
+  activePresetId: string | null
 
   initFromPersistence: () => void
   setActiveSlot: (slot: MaterialSlotId) => void
@@ -38,6 +48,9 @@ interface ConfiguratorStore {
   setError: (message: string | null) => void
   setToast: (message: string | null) => void
   setPanelOpen: (open: boolean) => void
+  setView: (view: AppView) => void
+  setSpecsOpen: (open: boolean) => void
+  applyPreset: (preset: ColorPreset) => void
   resetColors: () => void
   persist: () => void
 }
@@ -51,6 +64,22 @@ function persistSideEffects(
   writeHashConfig({ colors, paletteSource, activeSlot })
 }
 
+function syncViewHash(view: AppView): void {
+  try {
+    const url = new URL(window.location.href)
+    if (view === 'gallery') {
+      url.searchParams.set('страница', 'галерея')
+    } else {
+      url.searchParams.delete('страница')
+    }
+    // Сохраняем hash конфигурации
+    const next = `${url.pathname}${url.search}${url.hash}`
+    window.history.replaceState(null, '', next)
+  } catch (error) {
+    logger.warn('Не удалось обновить адрес страницы', error)
+  }
+}
+
 export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => ({
   colors: { ...DEFAULT_COLORS },
   activeSlot: 'body',
@@ -62,24 +91,34 @@ export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => ({
   error: null,
   toast: null,
   panelOpen: true,
+  view: 'configurator',
+  specsOpen: false,
+  activePresetId: null,
 
   initFromPersistence: () => {
     const fromHash = decodeConfigFromHash(window.location.hash)
     const fromLocal = loadConfigFromLocal()
     const source = fromHash ?? fromLocal
 
+    const params = new URLSearchParams(window.location.search)
+    const page = params.get('страница')
+    const view: AppView = page === 'галерея' ? 'gallery' : 'configurator'
+
     if (source) {
       set({
         colors: source.colors,
         paletteSource: source.paletteSource,
         activeSlot: source.activeSlot,
+        view,
       })
       logger.info('Конфигурация восстановлена')
+    } else {
+      set({ view })
     }
   },
 
   setActiveSlot: (slot) => {
-    set({ activeSlot: slot })
+    set({ activeSlot: slot, activePresetId: null })
     const { colors, paletteSource } = get()
     persistSideEffects(colors, paletteSource, slot)
   },
@@ -99,7 +138,7 @@ export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => ({
 
     const normalized = normalizeHex(hex)
     const colors = { ...get().colors, [slot]: normalized }
-    set({ colors, error: null })
+    set({ colors, error: null, activePresetId: null })
     const { paletteSource, activeSlot } = get()
     persistSideEffects(colors, paletteSource, activeSlot)
   },
@@ -124,9 +163,41 @@ export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => ({
 
   setPanelOpen: (open) => set({ panelOpen: open }),
 
+  setView: (view) => {
+    set({ view })
+    syncViewHash(view)
+  },
+
+  setSpecsOpen: (open) => set({ specsOpen: open }),
+
+  applyPreset: (preset) => {
+    if (!validatePreset(preset)) {
+      set({ error: 'Пресет повреждён или имеет неверный формат.' })
+      return
+    }
+
+    const colors = normalizePresetColors(preset.colors)
+    set({
+      colors,
+      paletteSource: preset.paletteSource,
+      activePresetId: preset.id,
+      error: null,
+      toast: `Применён пресет «${preset.name}».`,
+      isUnboxing: true,
+      hasUnboxed: false,
+    })
+    const { activeSlot } = get()
+    persistSideEffects(colors, preset.paletteSource, activeSlot)
+  },
+
   resetColors: () => {
     const colors = { ...DEFAULT_COLORS }
-    set({ colors, error: null, toast: 'Цвета сброшены к исходным.' })
+    set({
+      colors,
+      error: null,
+      toast: 'Цвета сброшены к исходным.',
+      activePresetId: null,
+    })
     const { paletteSource, activeSlot } = get()
     persistSideEffects(colors, paletteSource, activeSlot)
   },
