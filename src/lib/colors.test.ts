@@ -6,6 +6,7 @@ import {
   findClosestColor,
   contrastTextColor,
   formatSwatchLabel,
+  remapColorMapToPalette,
 } from '@/lib/colors'
 import type { ColorSwatch } from '@/types'
 
@@ -40,5 +41,21 @@ describe('colors', () => {
 
   it('форматирует подпись образца', () => {
     expect(formatSwatchLabel(palette[0]!)).toContain('Ультрамариновый')
+  })
+
+  it('переназначает карту цветов на палитру', () => {
+    const remapped = remapColorMapToPalette(
+      {
+        body: '#1B2480',
+        sole: '#FFFFFF',
+        laces: '#EEEEEE',
+        accent: '#CC0000',
+        logo: '#111111',
+      },
+      palette,
+    )
+    expect(remapped.body).toBe('#1A237E')
+    expect(remapped.sole).toBe('#F7F9EF')
+    expect(remapped.accent).toBe('#C1121C')
   })
 })

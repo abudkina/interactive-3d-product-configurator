@@ -53,7 +53,10 @@ test.describe('Конфигуратор 3D', () => {
     await page.goto('/')
     await ensurePanelOpen(page)
 
-    await page.getByRole('button', { name: 'RAL', exact: true }).click()
+    await page.getByRole('button', { name: 'Переключить на палитру RAL' }).click()
+    await expect(
+      page.getByRole('status').filter({ hasText: /подогнаны под палитру RAL/i }),
+    ).toBeVisible()
     await page.getByRole('button', { name: 'Изменить цвет: Подошва' }).click()
     await expect(page.getByRole('option').first()).toContainText('RAL')
   })

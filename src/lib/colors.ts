@@ -70,3 +70,38 @@ export function contrastTextColor(hex: string): '#0A0A0A' | '#FFFFFF' {
 export function formatSwatchLabel(swatch: ColorSwatch): string {
   return `${swatch.code} — ${swatch.name}`
 }
+
+/**
+ * Переназначает карту цветов на ближайшие оттенки выбранной палитры.
+ * Нужно, чтобы переключатель Pantone/RAL сразу менял модель.
+ */
+export function remapColorMapToPalette(
+  colors: {
+    body: string
+    sole: string
+    laces: string
+    accent: string
+    logo: string
+  },
+  palette: ColorSwatch[],
+): {
+  body: string
+  sole: string
+  laces: string
+  accent: string
+  logo: string
+} {
+  const remapOne = (hex: string): string => {
+    const closest = findClosestColor(hex, palette)
+    if (!closest) return normalizeHex(hex)
+    return normalizeHex(`#${closest.swatch.hex.replace('#', '')}`)
+  }
+
+  return {
+    body: remapOne(colors.body),
+    sole: remapOne(colors.sole),
+    laces: remapOne(colors.laces),
+    accent: remapOne(colors.accent),
+    logo: remapOne(colors.logo),
+  }
+}

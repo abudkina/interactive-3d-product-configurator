@@ -47,14 +47,22 @@ describe('configuratorStore', () => {
   })
 
   it('восстанавливает из LocalStorage', () => {
-    useConfiguratorStore.getState().setSlotColor('laces', '#445566')
     useConfiguratorStore.getState().setPaletteSource('ral')
+    useConfiguratorStore.getState().setSlotColor('laces', '#445566')
 
     useConfiguratorStore.setState({ colors: { ...DEFAULT_COLORS } })
     useConfiguratorStore.getState().initFromPersistence()
 
     expect(useConfiguratorStore.getState().colors.laces).toBe('#445566')
     expect(useConfiguratorStore.getState().paletteSource).toBe('ral')
+  })
+
+  it('при переключении палитры переназначает цвета', () => {
+    useConfiguratorStore.getState().setSlotColor('body', '#1B2480')
+    useConfiguratorStore.getState().setPaletteSource('ral')
+    expect(useConfiguratorStore.getState().paletteSource).toBe('ral')
+    expect(useConfiguratorStore.getState().colors.body).not.toBe('#1B2480')
+    expect(useConfiguratorStore.getState().toast).toMatch(/RAL/i)
   })
 
   it('применяет пресет и переключает вид', () => {

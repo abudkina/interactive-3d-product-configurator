@@ -3,6 +3,7 @@ import type {
   MaterialColorMap,
   MaterialSlotId,
   PaletteSource,
+  ColorSwatch,
 } from '@/types'
 import { DEFAULT_COLORS } from '@/lib/constants'
 import {
@@ -20,8 +21,18 @@ import {
   normalizePresetColors,
   validatePreset,
 } from '@/lib/presets'
+import { remapColorMapToPalette } from '@/lib/colors'
+import pantone from '@/data/pantone.json'
+import ral from '@/data/ral.json'
 
 export type AppView = 'configurator' | 'gallery'
+
+const pantoneSwatches = pantone as ColorSwatch[]
+const ralSwatches = ral as ColorSwatch[]
+
+function paletteFor(source: PaletteSource): ColorSwatch[] {
+  return source === 'ral' ? ralSwatches : pantoneSwatches
+}
 
 interface ConfiguratorStore {
   colors: MaterialColorMap
@@ -124,9 +135,24 @@ export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => ({
   },
 
   setPaletteSource: (source) => {
-    set({ paletteSource: source })
-    const { colors, activeSlot } = get()
-    persistSideEffects(colors, source, activeSlot)
+    const current = get()
+    if (current.paletteSource === source) return
+
+    const remapped = remapColorMapToPalette(
+      current.colors,
+      paletteFor(source),
+    )
+    const label = source === 'ral' ? 'RAL' : 'Pantone'
+    set({
+      paletteSource: source,
+      colors: remapped,
+      activePresetId: null,
+      error: null,
+      toast: `Цвета подогнаны под палитру ${label}.`,
+      isUnboxing: true,
+      hasUnboxed: false,
+    })
+    persistSideEffects(remapped, source, current.activeSlot)
   },
 
   setSlotColor: (slot, hex) => {

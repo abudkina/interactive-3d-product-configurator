@@ -5,7 +5,7 @@ import type { ColorSwatch, MaterialSlotId } from '@/types'
 import { MATERIAL_SLOTS } from '@/lib/constants'
 import { useConfiguratorStore } from '@/store/configuratorStore'
 import { ColorPicker } from '@/components/palette/ColorPicker'
-import { formatSwatchLabel } from '@/lib/colors'
+import { findClosestColor, formatSwatchLabel } from '@/lib/colors'
 
 const pantoneSwatches = pantone as ColorSwatch[]
 const ralSwatches = ral as ColorSwatch[]
@@ -39,7 +39,8 @@ export function MaterialPanel() {
     <section className="panel-section" aria-labelledby="materials-title">
       <h2 id="materials-title">Материалы</h2>
       <p className="panel-lead">
-        Выберите деталь и оттенок из палитры Pantone или RAL.
+        Переключатель Pantone / RAL сразу подгоняет цвета модели под выбранную
+        систему. Затем можно уточнить оттенок детали.
       </p>
 
       <div className="segmented" role="group" aria-label="Система цветов">
@@ -47,6 +48,7 @@ export function MaterialPanel() {
           type="button"
           className={paletteSource === 'pantone' ? 'is-active' : ''}
           aria-pressed={paletteSource === 'pantone'}
+          aria-label="Переключить на палитру Pantone"
           onClick={() => setPaletteSource('pantone')}
         >
           Pantone
@@ -55,6 +57,7 @@ export function MaterialPanel() {
           type="button"
           className={paletteSource === 'ral' ? 'is-active' : ''}
           aria-pressed={paletteSource === 'ral'}
+          aria-label="Переключить на палитру RAL"
           onClick={() => setPaletteSource('ral')}
         >
           RAL
@@ -64,6 +67,7 @@ export function MaterialPanel() {
       <ul className="slot-list">
         {MATERIAL_SLOTS.map((slot) => {
           const hex = colors[slot.id]
+          const match = findClosestColor(hex, palette)
           return (
             <li key={slot.id}>
               <button
@@ -80,7 +84,9 @@ export function MaterialPanel() {
                 />
                 <span className="slot-meta">
                   <span className="slot-label">{slot.label}</span>
-                  <span className="slot-hex">{hex}</span>
+                  <span className="slot-hex">
+                    {match ? match.swatch.code : hex}
+                  </span>
                 </span>
               </button>
             </li>
